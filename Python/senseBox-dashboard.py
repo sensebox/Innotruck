@@ -9,7 +9,7 @@ import serial
 app = QtGui.QApplication([])
 win = QtGui.QMainWindow()
 win.showMaximized()
-#win.showFullScreen()
+win.showFullScreen()
 win.setWindowTitle('senseBox:home Visualization')
 pg.setConfigOptions(antialias=True) # Enable antialiasing for prettier plots
 
@@ -48,10 +48,10 @@ c4 = p4.plot(pen='y')
 p5.setLabel('left',units='UV Intensit&auml;t in µW/m²')
 p5.showAxis('bottom', False)
 c5 = p5.plot(pen=(255,0,255))
-p6.setLabel('left',units='Feinstaubkonzentration in µg/m³')
+p6.setLabel('left',units='Feinstaubpartikel in µg/m³')
 p6.showAxis('bottom', False)
-c6 = p6.plot(pen=(255,150,50))
-c7 = p6.plot(pen=(150,255,50))
+c6 = p6.plot(pen=(100,100,50))
+c7 = p6.plot(pen=(0,255,0))
 
 p1.addLegend()
 l1 = p1.plotItem.legend
@@ -76,7 +76,7 @@ p1.enableAutoRange('x', True)
 p2.enableAutoRange('x', True)
 p3.enableAutoRange('x', True)
 p4.enableAutoRange('x', True)
-p5.enableAutoRange('x', True)
+p5.enableAutoRange('xy', True)
 p6.enableAutoRange('x', True)
 
 temp = '0' + u"\u2103"
@@ -96,8 +96,8 @@ def connectSenseBox(baud = 9600):
 	ports_avaiable = list(list_ports.comports())
 	senseBox_port = tuple()
 	for port in ports_avaiable:
-		if port[1].startswith("Genuino"):
-			senseBox_port = '/dev/' + port.name
+		if port[1].startswith("ttyACM"):
+			senseBox_port = '/dev/' + port[1]
 	if senseBox_port:
 		senseBox = serial.Serial(senseBox_port, baud, timeout=1)
 		print('Port ' + senseBox.name + ' is now open!')
@@ -137,12 +137,12 @@ def update():
 	sensors = np.roll(sensors, -1, axis=1)
 	sensors[:, -1:] = np.reshape(data,(7,1))
 
-	p1.setYRange(min(sensors[0,]),max(sensors[0,]) + (max(sensors[0,])-min(sensors[0,]))*20/100)
-	p2.setYRange(min(sensors[1,]),max(sensors[1,]) + (max(sensors[1,])-min(sensors[1,]))*20/100)
-	p3.setYRange(min(sensors[2,]),max(sensors[2,]) + (max(sensors[2,])-min(sensors[2,]))*20/100)
-	p4.setYRange(min(sensors[3,]),max(sensors[3,]) + (max(sensors[3,])-min(sensors[3,]))*20/100)
-	p5.setYRange(min(sensors[4,]),max(sensors[4,]) + (max(sensors[4,])-min(sensors[4,]))*20/100)
-	p6.setYRange(min(sensors[5,]),max(sensors[6,]) + (max(sensors[6,])-min(sensors[5,]))*25/100)
+	p1.setYRange(min(sensors[0,]),max(sensors[0,]) + (max(sensors[0,])-min(sensors[0,]))*0.2)
+	p2.setYRange(min(sensors[1,]),max(sensors[1,]) + (max(sensors[1,])-min(sensors[1,]))*0.2)
+	p3.setYRange(min(sensors[2,]),max(sensors[2,]) + (max(sensors[2,])-min(sensors[2,]))*0.2)
+	p4.setYRange(min(sensors[3,]),max(sensors[3,]) + (max(sensors[3,])-min(sensors[3,]))*0.2)
+	#p5.setYRange(min(sensors[4,]),max(sensors[4,]) + (max(sensors[4,])-min(sensors[4,]))*0.2)
+	p6.setYRange(min(sensors[5,]),max(sensors[6,]) + (max(sensors[6,])-min(sensors[5,]))*0.45)
 
 	c1.setData(sensors[0]) #temperature
 	c2.setData(sensors[1]) #humidity
@@ -158,7 +158,7 @@ def update():
 	pres = '%0.2f' % (data[2]) + 'hPa'
 	illu = '%0.1d' % (data[3]) + 'lx'
 	uvra = '%0.1d' % (data[4]) + u"\u00b5" + 'W/m' + u"\u00b2"
-	pm25 = '%0.1f' % (data[5]) + u"\u00b5" + 'g/m' + u"\u00b3" + ' (PM 2.5)'
+	pm25 = '%0.1f' % (data[5]) + u"\u00b5" + 'g/m' + u"\u00b3" + '(PM 2.5)'
 	pm10 = '%0.1f' % (data[6]) + u"\u00b5" + 'g/m' + u"\u00b3" + ' (PM 10)'
 
 	# insert new values to legend	
