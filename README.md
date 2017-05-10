@@ -20,9 +20,9 @@ Here is a prewiev of the [pyqtgraph](http://www.pyqtgraph.org/) based dashboard 
 Download and install an OS for the RPi and install it (we use [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) in this example). After that follow the intallation instructions on the [pyqtgraph homepage](http://www.pyqtgraph.org/).
 
 #### Python script
-Copy the python script in this directory to the pi home folder and make it executable:
+Copy the python script from this repository to the pi home folder and make it executable:
 ```
-sudo chmod -x senseBox-dashboard.py
+sudo chmod +x senseBox-dashboard.py
 ```
 To enable autostart of the script edit `~/.config/lxsession/LXDE-pi/autostart` and add the following line to the end of the file:
 ```
